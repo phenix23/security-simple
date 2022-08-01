@@ -11,8 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static com.example.securitysimple.security.ApplicationUserRole.ADMIN;
-import static com.example.securitysimple.security.ApplicationUserRole.STUDENT;
+import static com.example.securitysimple.security.ApplicationUserRole.*;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -23,10 +22,13 @@ public class ApplicationSecurityConfig {
     // WebSecurityConfigureAdapter is deprecated, so we use filterChain in place of Configure Methode
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authz ->
+        http
+                .csrf().disable() // disable csrf for (post,put) requests
+                .authorizeHttpRequests(authz ->
                         // whitelist
                         authz.antMatchers("/", "index", "/css", "/js/*")
                                 .permitAll()
+                                .antMatchers("/api/**").hasAnyRole(STUDENT.name())
                                 .anyRequest()
                                 .authenticated()
                 )
@@ -47,6 +49,11 @@ public class ApplicationSecurityConfig {
                         .username("fayçal")
                         .password(passwordEncoder().encode("password"))
                         .roles(STUDENT.name())
+                        .build(),
+                User.builder()
+                        .username("imene")
+                        .password(passwordEncoder().encode("password123"))
+                        .roles(ADMINTRAINNER.name())
                         .build()
         );
     }
