@@ -16,7 +16,12 @@ public class ApplicationSecurityConfig {
     // WebSecurityConfigureAdapter is deprecated, so we use filterChain in place of Configure Methode
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authz -> authz.anyRequest().authenticated()
+        http.authorizeHttpRequests(authz ->
+                        // whitelist
+                        authz.antMatchers("/","index","/css","/js/*")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
                 .httpBasic(withDefaults());
         return http.build();
