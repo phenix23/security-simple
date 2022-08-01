@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static com.example.securitysimple.security.ApplicationUserRole.ADMIN;
+import static com.example.securitysimple.security.ApplicationUserRole.STUDENT;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -23,7 +25,7 @@ public class ApplicationSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authz ->
                         // whitelist
-                        authz.antMatchers("/","index","/css","/js/*")
+                        authz.antMatchers("/", "index", "/css", "/js/*")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
@@ -34,12 +36,17 @@ public class ApplicationSecurityConfig {
 
     // Add user
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username("admin")
                         .password(passwordEncoder().encode("admin"))
-                        .roles("STUDENT")
+                        .roles(ADMIN.name())
+                        .build(),
+                User.builder()
+                        .username("fayçal")
+                        .password(passwordEncoder().encode("password"))
+                        .roles(STUDENT.name())
                         .build()
         );
     }
